@@ -66,6 +66,7 @@ class ChessFrontMove:
         if self.chessboard[end_x][end_y] == "黑将":
             gamemanager.current_turn = 3
         return gamemanager
+
     def p_vs_p(self):
         running = True  # 棋盘正在运行
         start_chosen, chess_board, end_position, gamemanager, i, gamelogic = self.init()
@@ -133,32 +134,34 @@ class ChessFrontMove:
         start_chosen, chess_board, end_position, gamemanager, i, gamelogic = self.init()
         ai = AILogicEasy(self.board)
         while running:
-            if gamemanager.current_turn == 0:
-                pygame.display.update()  # 更新显示
-                time.sleep(1)
-                start_x, start_y, end_x, end_y = ai.easy_ai_run()
-                print(start_x, start_y, end_x, end_y )
-                gamemanager = self.check_end(end_x, end_y, gamemanager)
-                chess_board = make_move([start_x, start_y], [end_x, end_y], chess_board)
-                self.chessboard[end_x][end_y], self.chessboard[start_x][start_y] = self.chessboard[start_x][
-                    start_y], 0
 
-                start_chosen = False
-                # 切换玩家
-                if gamemanager.current_turn in [0, 1]:
-                    gamemanager.next_turn()
-                self.come_x, self.come_y = start_x, start_y
-                if gamemanager.current_turn in [2, 3]:
+            for event in pygame.event.get():
+                if gamemanager.current_turn == 0:
+                    pygame.display.update()  # 更新显示
+                    pygame.time.wait(1000)
+                    pygame.event.clear()
+                    start_x, start_y, end_x, end_y = ai.easy_ai_run()
+                    print(start_x, start_y, end_x, end_y)
+                    gamemanager = self.check_end(end_x, end_y, gamemanager)
+                    chess_board = make_move([start_x, start_y], [end_x, end_y], chess_board)
+                    self.chessboard[end_x][end_y], self.chessboard[start_x][start_y] = self.chessboard[start_x][
+                        start_y], 0
+
+                    start_chosen = False
+                    # 切换玩家
+                    if gamemanager.current_turn in [0, 1]:
+                        gamemanager.next_turn()
+                    self.come_x, self.come_y = start_x, start_y
+                    if gamemanager.current_turn in [2, 3]:
+                        i.redraw(gamemanager.current_turn, [self.come_x, self.come_y])
+                        continue
+                    #  检查是否被将军
+                    if checkmated_prompt(chess_board, gamelogic):
+                        i.checkmate(gamemanager.current_turn, [self.come_x, self.come_y])
+                        continue
+                    # 重新绘制完成移动后的棋盘
                     i.redraw(gamemanager.current_turn, [self.come_x, self.come_y])
                     break
-                #  检查是否被将军
-                if checkmated_prompt(chess_board, gamelogic):
-                    i.checkmate(gamemanager.current_turn, [self.come_x, self.come_y])
-                    break
-                # 重新绘制完成移动后的棋盘
-                i.redraw(gamemanager.current_turn, [self.come_x, self.come_y])
-                continue
-            for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
@@ -167,6 +170,7 @@ class ChessFrontMove:
                     if gamemanager.current_turn >= 2:
                         break
                     mouse_x, mouse_y = event.pos
+                    print(mouse_x, mouse_y)
                     board_pos = ChessFrontInit(self.screen).get_board_pos(mouse_x, mouse_y)
                     # 移动移动，横纵坐标分别已经保存在了board_pos中
                     if board_pos:
