@@ -1,6 +1,6 @@
 from chess_piece import ChessPiece
 from chess_board import ChessBoard
-
+# 棋子的移动逻辑
 
 def is_in_board(x, y):
     return 0 <= x <= 9 and 0 <= y <= 8
