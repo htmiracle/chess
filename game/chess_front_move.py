@@ -223,3 +223,4 @@ class ChessFrontMove:
             self.p_vs_p()
         elif i == 2:
             self.p_vs_c()
+
