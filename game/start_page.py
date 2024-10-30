@@ -54,9 +54,12 @@ class StartPage:
     def check_events(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
             mouse_pos = event.pos
-            # 检测点击事件，跳转到游戏页面
-            if self.button_doub:
+            # 检测是否点击了双人对战按钮
+            if self.button_doub.is_clicked(mouse_pos):
                 return "double"
+            # 检测是否点击了人机对战按钮
+            elif self.button_ai.is_clicked(mouse_pos):
+                return "computer"
         return "start"
 
 

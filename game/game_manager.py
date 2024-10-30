@@ -1,6 +1,6 @@
 from chess_board import ChessBoard
 from game_logic import GameLogic
-
+# 控制前端棋子移动
 
 # 打印可以选中移动棋子后，它可以移动到的目标点
 def print_access(end_pos, chess_board):

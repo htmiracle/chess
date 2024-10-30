@@ -123,7 +123,7 @@ class ChessFrontMove:
                             # 重新绘制完成移动后的棋盘
                             i.redraw(gamemanager.current_turn, [self.come_x, self.come_y])
 
-                elif event.type == pygame.KEYDOWN:
+                elif event.type == pygame.KEYDOWN and event.key == pygame.K_c:
                     start_chosen, chess_board, end_position, gamemanager, i, gamelogic = self.init()
 
             pygame.display.update()  # 更新显示
@@ -209,10 +209,13 @@ class ChessFrontMove:
                             # 重新绘制完成移动后的棋盘
                             i.redraw(gamemanager.current_turn, [self.come_x, self.come_y])
 
-                elif event.type == pygame.KEYDOWN:
+                elif event.type == pygame.KEYDOWN and event.key == pygame.K_c:
                     start_chosen, chess_board, end_position, gamemanager, i, gamelogic = self.init()
 
             pygame.display.update()  # 更新显示
 
-    def run(self):
-        self.p_vs_c()
+    def run(self,i):
+        if i == 1:
+            self.p_vs_p()
+        elif i == 2:
+            self.p_vs_c()
