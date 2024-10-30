@@ -28,11 +28,11 @@ def is_in_black(x, y):
 
 class GameLogic:
     def __init__(self, board):
-        self.board = board
+        self.logic_board = board
 
     def could_eat(self, x, y, piece):
-        if self.board.board[x][y] is not None:
-            if self.board.board[x][y].color == piece.color:  # 颜色相等则不可以吃，不把他加入目标队列
+        if self.logic_board.board[x][y] is not None:
+            if self.logic_board.board[x][y].color == piece.color:  # 颜色相等则不可以吃，不把他加入目标队列
                 return False
         return True
 
@@ -103,8 +103,8 @@ class GameLogic:
                 barrier = 0
                 # 遍历检查起点和终点之间是否有障碍物，如果有则记录
                 for n in range(minx + 1, maxx):
-                    if self.board.board[n][dst[1]] is not None:
-                        barrier = self.board.board[n][dst[1]]
+                    if self.logic_board.board[n][dst[1]] is not None:
+                        barrier = self.logic_board.board[n][dst[1]]
                         break
                 if barrier:
                     continue
@@ -130,8 +130,8 @@ class GameLogic:
                 barrier = 0
                 # 遍历检查起点和终点之间是否有障碍物，如果有则记录
                 for n in range(minx + 1, maxx):
-                    if self.board.board[dst[0]][n] is not None:
-                        barrier = self.board.board[dst[0]][n]
+                    if self.logic_board.board[dst[0]][n] is not None:
+                        barrier = self.logic_board.board[dst[0]][n]
                         break
                 if barrier:
                     continue
@@ -149,7 +149,7 @@ class GameLogic:
             obstacle = [[1, 1], [1, -1], [-1, 1], [-1, -1]]
             for i in range(len(movs)):
                 if is_in_red(piece.position[0] + movs[i][0], piece.position[1] + movs[i][1]):
-                    if self.board.board[piece.position[0] + obstacle[i][0]][piece.position[1] + obstacle[i][1]] is None:
+                    if self.logic_board.board[piece.position[0] + obstacle[i][0]][piece.position[1] + obstacle[i][1]] is None:
                         if self.could_eat(piece.position[0] + movs[i][0], piece.position[1] + movs[i][1], piece):
                             new_position.append([piece.position[0] + movs[i][0], piece.position[1] + movs[i][1]])
         # 象的移动逻辑
@@ -159,7 +159,7 @@ class GameLogic:
             obstacle = [[1, 1], [1, -1], [-1, 1], [-1, -1]]
             for i in range(len(movs)):
                 if is_in_black(piece.position[0] + movs[i][0], piece.position[1] + movs[i][1]):
-                    if self.board.board[piece.position[0] + obstacle[i][0]][piece.position[1] + obstacle[i][1]] is None:
+                    if self.logic_board.board[piece.position[0] + obstacle[i][0]][piece.position[1] + obstacle[i][1]] is None:
                         if self.could_eat(piece.position[0] + movs[i][0], piece.position[1] + movs[i][1], piece):
                             new_position.append([piece.position[0] + movs[i][0], piece.position[1] + movs[i][1]])
         # 馬的移动逻辑
@@ -169,7 +169,7 @@ class GameLogic:
             obstacle = [[1, 0], [-1, 0], [0, 1], [0, -1]]
             for i in range(len(movs)):
                 if is_in_board(piece.position[0] + movs[i][0], piece.position[1] + movs[i][1]):
-                    if self.board.board[piece.position[0] + obstacle[i // 2][0]][
+                    if self.logic_board.board[piece.position[0] + obstacle[i // 2][0]][
                         piece.position[1] + obstacle[i // 2][1]] is None:
                         if self.could_eat(piece.position[0] + movs[i][0], piece.position[1] + movs[i][1], piece):
                             new_position.append([piece.position[0] + movs[i][0], piece.position[1] + movs[i][1]])
@@ -213,7 +213,7 @@ class GameLogic:
 
                 # 检查是否可以翻过其他棋子吃掉敌方，区别于車的代码的部分
                 # 先考虑目标点相同颜色棋子或者无棋子的情况
-                if not self.could_eat(dst[0], dst[1], piece) or self.board.board[dst[0]][dst[1]] is None:
+                if not self.could_eat(dst[0], dst[1], piece) or self.logic_board.board[dst[0]][dst[1]] is None:
                     # 判断棋子移动是否被阻拦的算法
                     # 设置起点和终点，便于遍历
                     minx, maxx = min(i, piece.position[0]), max(i, piece.position[0])
@@ -221,10 +221,10 @@ class GameLogic:
                     barrier = 0
                     # 遍历检查起点和终点之间是否有障碍物，如果有则记录
                     for n in range(minx + 1, maxx):
-                        if self.board.board[n][dst[1]] is not None:
-                            barrier = self.board.board[n][dst[1]]
+                        if self.logic_board.board[n][dst[1]] is not None:
+                            barrier = self.logic_board.board[n][dst[1]]
                             break
-                    if self.board.board[dst[0]][dst[1]] is not None:
+                    if self.logic_board.board[dst[0]][dst[1]] is not None:
                         continue
                     if barrier:
                         continue
@@ -234,8 +234,8 @@ class GameLogic:
                     barriers = []
                     # 遍历检查起点和终点之间是否有障碍物，如果有则记录
                     for n in range(minx + 1, maxx):
-                        if self.board.board[n][dst[1]] is not None:
-                            barrier = self.board.board[n][dst[1]]
+                        if self.logic_board.board[n][dst[1]] is not None:
+                            barrier = self.logic_board.board[n][dst[1]]
                             barriers.append(barrier)
                     if len(barriers) != 1:
                         continue
@@ -253,7 +253,7 @@ class GameLogic:
 
                 # 检查是否可以翻过其他棋子吃掉敌方，区别于車的代码的部分
                 # 先考虑目标点相同颜色棋子或者无棋子的情况
-                if not self.could_eat(dst[0], dst[1], piece) or self.board.board[dst[0]][dst[1]] is None:
+                if not self.could_eat(dst[0], dst[1], piece) or self.logic_board.board[dst[0]][dst[1]] is None:
                     # 判断棋子移动是否被阻拦的算法
                     # 设置起点和终点，便于遍历
                     minx, maxx = min(j, piece.position[1]), max(j, piece.position[1])
@@ -261,10 +261,10 @@ class GameLogic:
                     barrier = 0
                     # 遍历检查起点和终点之间是否有障碍物，如果有则记录
                     for n in range(minx + 1, maxx):
-                        if self.board.board[dst[0]][n] is not None:
-                            barrier = self.board.board[dst[0]][n]
+                        if self.logic_board.board[dst[0]][n] is not None:
+                            barrier = self.logic_board.board[dst[0]][n]
                             break
-                    if self.board.board[dst[0]][dst[1]] is not None:
+                    if self.logic_board.board[dst[0]][dst[1]] is not None:
                         continue
                     if barrier:
                         continue
@@ -274,8 +274,8 @@ class GameLogic:
                     barriers = []
                     # 遍历检查起点和终点之间是否有障碍物，如果有则记录
                     for n in range(minx + 1, maxx):
-                        if self.board.board[dst[0]][n] is not None:
-                            barrier = self.board.board[dst[0]][n]
+                        if self.logic_board.board[dst[0]][n] is not None:
+                            barrier = self.logic_board.board[dst[0]][n]
                             barriers.append(barrier)
                     if len(barriers) != 1:
                         continue
@@ -297,7 +297,7 @@ class GameLogic:
         loc = [piece.position[0], piece.position[1]]
         for i in range(10):
             for j in range(9):
-                pie = self.board.board[i][j]
+                pie = self.logic_board.board[i][j]
                 if pie:
                     if loc in self.piece_logic(pie):
                         return 1
