@@ -1,3 +1,4 @@
+#棋子类
 class ChessPiece:
     def __init__(self, name, color, position):
         self.name = name  # 棋子的名字
