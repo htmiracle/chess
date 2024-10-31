@@ -142,8 +142,7 @@ class ChessFrontMove:
                     print(start_x, start_y, end_x, end_y)
                     gamemanager.check_end(end_x, end_y)
                     chess_board = make_move([start_x, start_y], [end_x, end_y], chess_board)
-                    self.chessboard[end_x][end_y], self.chessboard[start_x][start_y] = self.chessboard[start_x][
-                        start_y], 0
+                    self.chessboard[end_x][end_y], self.chessboard[start_x][start_y] = self.chessboard[start_x][start_y], 0
 
                     start_chosen = False
                     # 切换玩家
