@@ -1,11 +1,12 @@
-from chess_front_init import ChessFrontInit
+from chess_front_init import ChessFrontInit, restart, hint, undo
+import pygame
+import time
 import sys
 from ai_logic_easy import AILogicEasy
 from game_manager import GameManager
 from game_logic import GameLogic
 from game_manager import make_move
-import pygame
-import time
+from image_button import ImageButton
 
 
 # 玩家对战游戏模式移动判定
@@ -72,6 +73,7 @@ class ChessFrontMove:
         start_chosen, chess_board, end_position, gamemanager, i, gamelogic = self.init()
 
         while running:
+
             for event in pygame.event.get():
                 pygame.display.update()  # 更新显示
                 if event.type == pygame.QUIT:
@@ -123,6 +125,10 @@ class ChessFrontMove:
                                 break
                             # 重新绘制完成移动后的棋盘
                             i.redraw(gamemanager.current_turn, [self.come_x, self.come_y])
+                    elif restart.is_clicked(event.pos) or undo.is_clicked(event.pos):
+                        print(restart.rect)
+                        pygame.event.post(event)
+                        return
 
                 elif event.type == pygame.KEYDOWN and event.key == pygame.K_c:
                     start_chosen, chess_board, end_position, gamemanager, i, gamelogic = self.init()
@@ -134,7 +140,6 @@ class ChessFrontMove:
         start_chosen, chess_board, end_position, gamemanager, i, gamelogic = self.init()
         ai = AILogicEasy(self.board)
         while running:
-
             for event in pygame.event.get():
                 if gamemanager.current_turn == 0:
                     pygame.display.update()  # 更新显示
@@ -214,13 +219,14 @@ class ChessFrontMove:
                             i.redraw(gamemanager.current_turn, [self.come_x, self.come_y])
 
                 elif event.type == pygame.KEYDOWN and event.key == pygame.K_c:
+                    pygame.event.clear()
                     start_chosen, chess_board, end_position, gamemanager, i, gamelogic = self.init()
 
             pygame.display.update()  # 更新显示
 
-    def run(self,i):
+    def run(self, i):
         if i == 1:
             self.p_vs_p()
         elif i == 2:
-            self.p_vs_c()
 
+            self.p_vs_c()

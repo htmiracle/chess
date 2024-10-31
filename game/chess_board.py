@@ -42,9 +42,6 @@ class ChessBoard:
             for pos in positions:
                 self.board[pos[0]][pos[1]] = ChessPiece(name, "black", pos)
                 maps[pos[0]][pos[1]] = name
-        print(self.board)
-        for line in maps:
-            print(line)
         return self.board
 
     def is_valid_move(self, piece, new_position):

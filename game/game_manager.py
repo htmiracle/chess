@@ -3,26 +3,26 @@ from game_logic import GameLogic
 # 控制前端棋子移动
 
 # 打印可以选中移动棋子后，它可以移动到的目标点
-def print_access(end_pos, chess_board):
-    for i in range(0, 10):
-        for j in range(0, 9):
-            if [i, j] in end_pos:
-                print("十", end=" ")
-            elif chess_board[i][j] is None:
-                print("〇", end=" ")
-            else:
-                print(chess_board[i][j].name, end=" ")
-        print()
+# def print_access(end_pos, chess_board):
+#     for i in range(0, 10):
+#         for j in range(0, 9):
+#             if [i, j] in end_pos:
+#                 print("十", end=" ")
+#             elif chess_board[i][j] is None:
+#                 print("〇", end=" ")
+#             else:
+#                 print(chess_board[i][j].name, end=" ")
+#         print()
 
 
-def print_board(chess_board):
-    for line in chess_board:
-        for item in line:
-            if item is None:
-                print("〇", end=" ")
-            else:
-                print(item.name, end=" ")
-        print()
+# def print_board(chess_board):
+#     for line in chess_board:
+#         for item in line:
+#             if item is None:
+#                 print("〇", end=" ")
+#             else:
+#                 print(item.name, end=" ")
+#         print()
 
 
 def make_move(start_pos, end_pos, board):

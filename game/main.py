@@ -22,17 +22,18 @@ start_page = StartPage(screen)
 doub_page = DoublePage(screen)
 ai_page = AiPage(screen)
 
+
 # 当前页面状态
 current_page = "start"
 
 # 游戏主循环
 running = True
 while running:
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
-
         # 根据当前页面状态处理事件
         if current_page == "start":
             current_page = start_page.check_events(event)
