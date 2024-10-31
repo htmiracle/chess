@@ -1,5 +1,5 @@
 import pygame
-from chess_front_init import ChessFrontInit
+from chess_front_init import ChessFrontInit, restart, hint, undo
 from chess_front_move import ChessFrontMove
 from chess_board import ChessBoard
 
@@ -41,8 +41,13 @@ class DoublePage:
     def check_events(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
             mouse_pos = event.pos
-            if self.button_BACK.is_clicked(mouse_pos):
-                return "start"
+            # 检测是否点击了双人对战按钮
+            if restart.is_clicked(mouse_pos):
+                print(restart.rect)
+                return "double"
+            if undo.is_clicked(mouse_pos):
+                return "start"  # 按下 ESC 键返回开始界面
+
         return "double"
 
 class AiPage:

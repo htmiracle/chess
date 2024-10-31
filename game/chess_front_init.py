@@ -1,5 +1,6 @@
 import pygame
 import sys
+from image_button import ImageButton
 
 # 初始化 pygame
 pygame.init()
@@ -20,9 +21,28 @@ WHITE = (255, 255, 255)
 RED = (178, 34, 34)
 WOOD = (245, 222, 179)
 
+chess_board_layer_width = 165
+chess_board_layer_height = 115
+chess_board_layer = pygame.Surface((880 - 2 * chess_board_layer_width, 840 - 2 * chess_board_layer_height))  # 840->720
+
 # 偏移量用于将棋盘居中
-offset_x = (SCREEN_SIZE[0] - BOARD_WIDTH) // 2
-offset_y = (SCREEN_SIZE[1] - BOARD_HEIGHT) // 2
+offset_x = (SCREEN_SIZE[0] - BOARD_WIDTH) // 2 - chess_board_layer_width
+offset_y = (SCREEN_SIZE[1] - BOARD_HEIGHT) // 2 - chess_board_layer_height
+
+menu_layer_x = 500
+menu_layer_y = 750
+menu_layer = pygame.Surface((360, 50))
+restart = ImageButton("../other_picture/restart.jpg", 0, 2, 90, 46,
+                                       transparency=230, layer_x=menu_layer_x,layer_y=menu_layer_y)
+undo = ImageButton("../other_picture/undo.jpg", 100, 2, 90, 46,
+                                       transparency=230, layer_x=menu_layer_x,layer_y=menu_layer_y)
+hint = ImageButton("../other_picture/hint.jpg", 200, 2, 90, 46,
+                                       transparency=230, layer_x=menu_layer_x,layer_y=menu_layer_y)
+
+print(restart.rect)
+print(restart.abs_rect)
+
+
 
 # 加载棋子图像
 piece_images = {
@@ -70,49 +90,56 @@ class ChessFrontInit:
 
     def draw_chessboard(self):
         self.screen.fill(WHITE)  # 背景颜色为白色
+        chess_board_layer.fill(WHITE)
+        menu_layer.fill(WHITE)
+        restart.draw_layer(menu_layer)
+        undo.draw_layer(menu_layer)
+        hint.draw_layer(menu_layer)
 
         # 绘制横线
         for row in range(10):
-            pygame.draw.line(self.screen, BLACK,
+            pygame.draw.line(chess_board_layer, BLACK,
                              (offset_x, offset_y + row * CELL_SIZE),
                              (offset_x + BOARD_WIDTH, offset_y + row * CELL_SIZE), 2)
 
         # 绘制竖线
         for col in range(9):
-            pygame.draw.line(self.screen, BLACK,
+            pygame.draw.line(chess_board_layer, BLACK,
                              (offset_x + col * CELL_SIZE, offset_y),
                              (offset_x + col * CELL_SIZE, offset_y + BOARD_HEIGHT / 9 * 4), 2)
-            pygame.draw.line(self.screen, BLACK,
+            pygame.draw.line(chess_board_layer, BLACK,
                              (offset_x + col * CELL_SIZE, offset_y + BOARD_HEIGHT / 9 * 5),
                              (offset_x + col * CELL_SIZE, offset_y + BOARD_HEIGHT), 2)
 
         # 绘制“楚河”和“汉界”之间的间隙
-        pygame.draw.line(self.screen, BLACK,
+        pygame.draw.line(chess_board_layer, BLACK,
                          (offset_x, offset_y + 4 * CELL_SIZE),
                          (offset_x + BOARD_WIDTH, offset_y + 4 * CELL_SIZE), 2)
-        pygame.draw.line(self.screen, BLACK,
+        pygame.draw.line(chess_board_layer, BLACK,
                          (offset_x, offset_y + 5 * CELL_SIZE),
                          (offset_x + BOARD_WIDTH, offset_y + 5 * CELL_SIZE), 2)
 
         # 绘制九宫格
-        pygame.draw.line(self.screen, BLACK,
+        pygame.draw.line(chess_board_layer, BLACK,
                          (offset_x + 3 * CELL_SIZE, offset_y),
                          (offset_x + 5 * CELL_SIZE, offset_y + 2 * CELL_SIZE), 2)
-        pygame.draw.line(self.screen, BLACK,
+        pygame.draw.line(chess_board_layer, BLACK,
                          (offset_x + 5 * CELL_SIZE, offset_y),
                          (offset_x + 3 * CELL_SIZE, offset_y + 2 * CELL_SIZE), 2)
 
-        pygame.draw.line(self.screen, BLACK,
+        pygame.draw.line(chess_board_layer, BLACK,
                          (offset_x + 3 * CELL_SIZE, offset_y + 7 * CELL_SIZE),
                          (offset_x + 5 * CELL_SIZE, offset_y + 9 * CELL_SIZE), 2)
-        pygame.draw.line(self.screen, BLACK,
+        pygame.draw.line(chess_board_layer, BLACK,
                          (offset_x + 5 * CELL_SIZE, offset_y + 7 * CELL_SIZE),
                          (offset_x + 3 * CELL_SIZE, offset_y + 9 * CELL_SIZE), 2)
+        self.screen.blit(chess_board_layer, (chess_board_layer_width, chess_board_layer_height))
+        self.screen.blit(menu_layer, (500, 750))
 
     # 将点击的像素坐标转换为数组的行列坐标
     def get_board_pos(self, mouse_x, mouse_y):
-        col = (mouse_x - offset_x + 30) // CELL_SIZE
-        row = (mouse_y - offset_y + 30) // CELL_SIZE
+        col = (mouse_x - offset_x + 30 - chess_board_layer_width) // CELL_SIZE
+        row = (mouse_y - offset_y + 30 - chess_board_layer_height) // CELL_SIZE
 
         # 确保坐标在有效范围内
         if 0 <= col < 9 and 0 <= row < 10:
@@ -133,7 +160,8 @@ class ChessFrontInit:
         center_y = offset_y + row * CELL_SIZE - radius
 
         # 将具有透明度的表面绘制到屏幕上
-        self.screen.blit(glowing_surface, (center_x, center_y))
+        chess_board_layer.blit(glowing_surface, (center_x, center_y))
+        self.screen.blit(chess_board_layer, (chess_board_layer_width, chess_board_layer_height))
 
     # 画出预测点
     def pridect_show(self, pos):
@@ -141,7 +169,6 @@ class ChessFrontInit:
             for col in range(9):
                 if [row, col] in pos:
                     self.draw_glowing_point(row, col, color=(0, 255, 0), radius=10, transparency=128)
-
     def draw_piece(self):
         for row in range(10):
             for col in range(9):
@@ -150,7 +177,10 @@ class ChessFrontInit:
                     piece_image = piece_images[piece]
                     piece_rect = piece_image.get_rect()
                     piece_rect.center = (offset_x + col * CELL_SIZE, offset_y + row * CELL_SIZE)
-                    self.screen.blit(piece_image, piece_rect)
+                    chess_board_layer.blit(piece_image, piece_rect)
+                    self.screen.blit(chess_board_layer, (chess_board_layer_width, chess_board_layer_height))
+
+
 
     def draw_piece_scaled(self, pos, end_pos):
         for row in range(10):
@@ -164,24 +194,28 @@ class ChessFrontInit:
                         scaled_piece_image = pygame.transform.scale(piece_image, (CELL_SIZE, CELL_SIZE))  # 将图片缩放
                     piece_rect = scaled_piece_image.get_rect()
                     piece_rect.center = (offset_x + col * CELL_SIZE, offset_y + row * CELL_SIZE)
-                    self.screen.blit(scaled_piece_image, piece_rect)
+                    chess_board_layer.blit(scaled_piece_image, piece_rect)
+                    self.screen.blit(chess_board_layer, (chess_board_layer_width, chess_board_layer_height))
 
     # 显示红色方的文本
     def draw_text_red(self, text):
         text_image = font.render(text, True, RED)
-        text_rect = text_image.get_rect(topleft=(180, 60))  # 将文本放在上方靠左
-        self.screen.blit(text_image, text_rect)
+        text_rect = text_image.get_rect(topleft=(0, 60))  # 将文本放在上方靠左
+        # chess_board_layer.blit(text_image, text_rect)
+        # self.screen.blit(chess_board_layer, (chess_board_layer_width, chess_board_layer_height))
 
     def draw_text_chkmate(self, text):
         text_image = font.render(text, True, RED)
         text_rect = text_image.get_rect(topleft=(0, 0))  # 将文本放在上方靠左
-        self.screen.blit(text_image, text_rect)
+        chess_board_layer.blit(text_image, text_rect)
+        self.screen.blit(chess_board_layer, (chess_board_layer_width, chess_board_layer_height))
 
     # 显示黑色方的文本
     def draw_text_black(self, text):
         text_image = font.render(text, True, BLACK)
-        text_rect = text_image.get_rect(bottomleft=(180, SCREEN_SIZE[1] - 60))  # 将文本放在上方靠左
-        self.screen.blit(text_image, text_rect)
+        text_rect = text_image.get_rect(bottomleft=(0, SCREEN_SIZE[1] - 60))  # 将文本放在上方靠左
+        # chess_board_layer.blit(text_image, text_rect)
+        # self.screen.blit(chess_board_layer, (chess_board_layer_width, chess_board_layer_height))
 
     # 初始化棋盘
     def initialize(self):
@@ -202,6 +236,8 @@ class ChessFrontInit:
         self.draw_chessboard()
         self.draw_text_red("红方" + turn_str[turn][0])  # 绘制文本
         self.draw_text_black("黑方" + turn_str[turn][1])  # 绘制文本
+
+
 
     # 重新绘制完成移动后的棋盘
     def redraw(self, turn, last_pos):
