@@ -35,8 +35,8 @@ class StartPage:
         # 绘制背景
         self.screen.blit(self.background_image, (0, 0))
         # 绘制按钮
-        self.button_doub.draw(screen)
-        self.button_ai.draw(screen)
+        self.button_doub.draw(self.screen)
+        self.button_ai.draw(self.screen)
 
     def check_events(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
