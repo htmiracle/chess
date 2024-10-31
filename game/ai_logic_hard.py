@@ -63,7 +63,7 @@ class AILogicHard:
 
         if maximizingPlayer:
             maxEval = float('-inf') # 如果当前轮到最大化玩家（例如 AI），我们初始化 maxEval 为负无穷大，以便在接下来的循环中找到最大的可能值。
-            for piece,moves in self.get_all_possible_moves('red'): # 获取当前棋盘上红方（最大化玩家）所有可能的走法
+            for piece,moves in self.get_all_possible_moves(board, 'red').items(): # 获取当前棋盘上红方（最大化玩家）所有可能的走法
                 for move in moves:
                     new_board = self.make_move(board, move, piece) # 执行走棋，将棋子从起点移动到终点，并返回一个新棋盘（new_board），表示移动后的状态
                     eval = self.minimax(new_board, depth - 1, alpha, beta, False) # 递归调用 minimax，通过对 new_board 递归深入搜索，并将 depth 减少 1。False 表示下一步是对手的轮次（最小化玩家）。
@@ -74,7 +74,7 @@ class AILogicHard:
             return maxEval # 当所有可能的走法都被评估过，返回 maxEval，即最大化玩家能得到的最佳评分
         else:
             minEval = float('inf') # 如果当前是最小化玩家的轮次（例如对手），我们初始化 minEval 为正无穷大，以便在接下来的循环中找到最小的可能值
-            for piece,moves in self.get_all_possible_moves('black'):
+            for piece,moves in self.get_all_possible_moves(board, 'black').items():
                 for move in moves:
                     new_board = self.make_move(board, move, piece) # 获取当前棋盘上黑方（最小化玩家）所有可能的走法，并执行这些走法，生成新的棋盘状态
                     eval = self.minimax(new_board, depth - 1, alpha, beta, True) # 递归调用 minimax，进入下一层的搜索。True 表示下一轮是最大化玩家的轮次
@@ -95,7 +95,7 @@ class AILogicHard:
         # 否则使用 Minimax + Alpha-Beta 剪枝选择最佳走法
         best_move = None
         best_value = float('-inf')
-        for piece,moves in self.get_all_possible_moves('red'):
+        for piece,moves in self.get_all_possible_moves(board,'red').items():
             for move in moves:
                 new_board = self.make_move(board, move, piece)
                 board_value = self.minimax(new_board, self.depth_limit, float('-inf'), float('inf'), False)
@@ -104,12 +104,13 @@ class AILogicHard:
                     best_move = piece.position[0],piece.position[1],move[0],move[1]
         return best_move
 
-    def get_all_possible_moves(self, color):
+    def get_all_possible_moves(self, board, color):
         """获取当前棋盘上所有棋子的可能走法。"""
         moves = {}
-        for piece in self.logic_board.board:
-            if piece and piece.color == color:
-                moves[piece] = self.gamelogic.piece_logic(piece)
+        for row in board:
+            for piece in row:
+                if piece and piece.color == color:
+                    moves[piece] = self.gamelogic.piece_logic(piece)
 
         return moves
 
@@ -126,5 +127,6 @@ class AILogicHard:
         """生成棋盘的紧凑哈希值。"""
         board_str = str(board)
         return hashlib.md5(board_str.encode()).hexdigest()  # 使用 MD5 生成固定长度哈希值
+
 
 
