@@ -60,33 +60,25 @@ class ChessFrontMove:
                           [self.come_x, self.come_y])
         return start_x, start_y, end_pos
 
-    def check_end(self, end_x, end_y, gamemanager):
-
-        if self.chessboard[end_x][end_y] == "红帅":
-            gamemanager.current_turn = 2
-        if self.chessboard[end_x][end_y] == "黑将":
-            gamemanager.current_turn = 3
-        return gamemanager
 
     def p_vs_p(self):
         running = True  # 棋盘正在运行
         start_chosen, chess_board, end_position, gamemanager, i, gamelogic = self.init()
 
         while running:
-
             for event in pygame.event.get():
                 pygame.display.update()  # 更新显示
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
                 elif event.type == pygame.MOUSEBUTTONDOWN:
-                    # 如果当前操作人编号大于1，说明游戏结束
-                    if gamemanager.current_turn >= 2:
-                        break
                     mouse_x, mouse_y = event.pos
                     board_pos = ChessFrontInit(self.screen).get_board_pos(mouse_x, mouse_y)
                     # 移动移动，横纵坐标分别已经保存在了board_pos中
                     if board_pos:
+                        # 如果当前操作人编号大于1，说明游戏结束
+                        if gamemanager.current_turn >= 2:
+                            break
                         # 起始格
                         if not start_chosen:
                             # 判断选择的棋子是否为空,选择的棋子是否是该回合棋手的颜色,如果不是则跳过
@@ -229,5 +221,4 @@ class ChessFrontMove:
         if i == 1:
             self.p_vs_p()
         elif i == 2:
-
             self.p_vs_c()
