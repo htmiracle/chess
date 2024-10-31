@@ -6,6 +6,7 @@ from ai_logic_easy import AILogicEasy
 from game_manager import GameManager
 from game_logic import GameLogic
 from game_manager import make_move
+from ai_logic_hard import AILogicHard
 from image_button import ImageButton
 
 
@@ -131,15 +132,14 @@ class ChessFrontMove:
     def p_vs_c(self):
         running = True  # 棋盘正在运行
         start_chosen, chess_board, end_position, gamemanager, i, gamelogic = self.init()
-        ai = AILogicEasy(self.board)
+        ai = AILogicHard(self.board)
         while running:
             for event in pygame.event.get():
                 if gamemanager.current_turn == 0:
                     pygame.display.update()  # 更新显示
                     pygame.time.wait(1000)
                     pygame.event.clear()
-                    start_x, start_y, end_x, end_y = ai.easy_ai_run()
-                    print(start_x, start_y, end_x, end_y)
+                    start_x, start_y, end_x, end_y = 0, 0, 1, 0
                     gamemanager.check_end(end_x, end_y)
                     chess_board = make_move([start_x, start_y], [end_x, end_y], chess_board)
                     self.chessboard[end_x][end_y], self.chessboard[start_x][start_y] = self.chessboard[start_x][start_y], 0
