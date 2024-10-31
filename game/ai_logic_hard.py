@@ -49,13 +49,14 @@ class AILogicHard:
     '''
     def minimax(self, board, depth, alpha, beta, maximizingPlayer): #
         """Minimax 算法与 Alpha-Beta 剪枝相结合，用于寻找最佳走法。"""
-        if depth == 0 or self.is_game_over(board):
-            return self.evaluate_board(board)
+        if depth == 0 or self.is_game_over(board): # 如果递归深度 depth 为 0，或者游戏已经结束（通过 is_game_over 检查），则返回当前棋盘的评估值（evaluate_board），不再继续深入递归
+            return self.evaluate_board(board) # 返回的是当前棋盘的一个分数，用于判断该棋局对当前玩家的有利程度（正数表示有利，负数表示不利）
 
         if maximizingPlayer:
-            maxEval = float('-inf')
-            for move in self.get_all_possible_moves(board, 'red'):
-                new_board = self.make_move(board, move)
+            TODO
+            maxEval = float('-inf') # 如果当前轮到最大化玩家（例如 AI），我们初始化 maxEval 为负无穷大，以便在接下来的循环中找到最大的可能值。
+            for move in self.get_all_possible_moves(board, 'red'): # 获取当前棋盘上红方（最大化玩家）所有可能的走法
+                new_board = self.make_move(board, move) # 执行走棋，将棋子从起点移动到终点，并返回一个新棋盘（new_board），表示移动后的状态
                 eval = self.minimax(new_board, depth - 1, alpha, beta, False)
                 maxEval = max(maxEval, eval)
                 alpha = max(alpha, eval)
