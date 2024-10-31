@@ -38,7 +38,14 @@ class GameManager:
         self.board = board
         self.logic = logic
 
-
+    def check_end(self, end_x, end_y):
+        print(self.board)
+        if self.board[end_x][end_y] is None:
+            return
+        if self.board[end_x][end_y].name == "帅":
+            self.current_turn = 2
+        if self.board[end_x][end_y].name == "将":
+            self.current_turn = 3
 
     def input_start(self, chess_board):
         inputing = True  # 正在输入起始点
