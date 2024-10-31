@@ -106,7 +106,7 @@ class ChessFrontMove:
                             if [end_x, end_y] not in end_pos:
                                 print("请重新输入")
                                 break
-                            gamemanager = self.check_end(end_x, end_y, gamemanager)
+                            gamemanager.check_end(end_x, end_y)
                             chess_board = make_move([start_x, start_y], [end_x, end_y], chess_board)
                             self.chessboard[end_x][end_y], self.chessboard[start_x][start_y] = self.chessboard[start_x][
                                 start_y], 0
@@ -116,6 +116,7 @@ class ChessFrontMove:
                             if gamemanager.current_turn in [0, 1]:
                                 gamemanager.next_turn()
                             self.come_x, self.come_y = start_x, start_y
+                            # 判断
                             if gamemanager.current_turn in [2, 3]:
                                 i.redraw(gamemanager.current_turn, [self.come_x, self.come_y])
                                 break
@@ -147,7 +148,7 @@ class ChessFrontMove:
                     pygame.event.clear()
                     start_x, start_y, end_x, end_y = ai.easy_ai_run()
                     print(start_x, start_y, end_x, end_y)
-                    gamemanager = self.check_end(end_x, end_y, gamemanager)
+                    gamemanager.check_end(end_x, end_y)
                     chess_board = make_move([start_x, start_y], [end_x, end_y], chess_board)
                     self.chessboard[end_x][end_y], self.chessboard[start_x][start_y] = self.chessboard[start_x][start_y], 0
 
@@ -197,7 +198,7 @@ class ChessFrontMove:
                             if [end_x, end_y] not in end_pos:
                                 print("请重新输入")
                                 break
-                            gamemanager = self.check_end(end_x, end_y, gamemanager)
+                            gamemanager.check_end(end_x, end_y)
                             chess_board = make_move([start_x, start_y], [end_x, end_y], chess_board)
                             self.chessboard[end_x][end_y], self.chessboard[start_x][start_y] = self.chessboard[start_x][
                                 start_y], 0

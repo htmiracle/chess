@@ -180,6 +180,15 @@ class GameLogic:
                 if is_in_red_barrack(piece.position[0] + mov[0], piece.position[1] + mov[1]):
                     if self.could_eat(piece.position[0] + mov[0], piece.position[1] + mov[1], piece):
                         new_position.append([piece.position[0] + mov[0], piece.position[1] + mov[1]])
+            for j in range(10):
+                if is_in_board(piece.position[0] + 1 + j, piece.position[1]):
+                    if self.logic_board.board[piece.position[0] + 1 + j][piece.position[1]] is None:
+                        continue
+                    if self.logic_board.board[piece.position[0] + 1 + j][piece.position[1]].name == "将":
+                        new_position.append([piece.position[0] + 1 + j, piece.position[1]])
+                        break
+                    else:
+                        break
         # 将的移动逻辑
         if piece.name == "将":
             movs = [[0, 1], [0, -1], [-1, 0], [1, 0]]
@@ -187,6 +196,16 @@ class GameLogic:
                 if is_in_black_barrack(piece.position[0] + mov[0], piece.position[1] + mov[1]):
                     if self.could_eat(piece.position[0] + mov[0], piece.position[1] + mov[1], piece):
                         new_position.append([piece.position[0] + mov[0], piece.position[1] + mov[1]])
+            for j in range(10):
+                if is_in_board(piece.position[0] - 1 - j, piece.position[1]):
+                    if self.logic_board.board[piece.position[0] - 1 - j][piece.position[1]] is None:
+                        continue
+                    if self.logic_board.board[piece.position[0] - 1 - j][piece.position[1]].name == "帅":
+                        new_position.append([piece.position[0] - 1 - j, piece.position[1]])
+                        break
+                    else:
+                        break
+
         # 仕的移动逻辑
         if piece.name == "仕":
             movs = [[1, 1], [-1, -1], [-1, 1], [1, -1]]

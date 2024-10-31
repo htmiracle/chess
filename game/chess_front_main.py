@@ -47,7 +47,6 @@ class DoublePage:
                 return "double"
             if undo.is_clicked(mouse_pos):
                 return "start"  # 按下 ESC 键返回开始界面
-
         return "double"
 
 class AiPage:
