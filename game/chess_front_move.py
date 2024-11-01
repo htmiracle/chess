@@ -132,7 +132,7 @@ class ChessFrontMove:
     def p_vs_c(self):
         running = True  # 棋盘正在运行
         start_chosen, chess_board, end_position, gamemanager, i, gamelogic = self.init()
-        ai = AILogicHard(self.board, 9)
+        ai = AILogicHard(self.board, 1)
         while running:
             for event in pygame.event.get():
                 if gamemanager.current_turn == 0:
