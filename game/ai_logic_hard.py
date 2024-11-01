@@ -3,17 +3,33 @@ from game_manager import GameManager
 from chess_board import ChessBoard
 from game_logic import GameLogic
 import hashlib
+import concurrent.futures
+
 
 class OpeningLibrary:
     def __init__(self):
         self.openings = {
-            'initial': [(0, 0, 3, 0), (2, 1, 2, 4)],  # 示例开局库，可根据实际情况扩充
+            0: [(2, 1, 2, 4), (9, 1, 7, 1)],
+            1: [(2, 1, 2, 4), (9, 1, 7, 1), (0, 0, 2, 0), (9, 8, 7, 8)],
+            2: [(2, 1, 2, 4), (9, 1, 7, 1), (0, 0, 2, 0), (9, 2, 7, 2)],
+            3: [(2, 1, 2, 4), (9, 1, 7, 1), (0, 0, 2, 0), (9, 8, 7, 8)],
+            4: [(0, 6, 2, 4), (9, 1, 7, 1), (0, 0, 2, 0), (9, 7, 7, 7)],
+            5: [(0, 6, 2, 4), (9, 8, 7, 8), (0, 0, 2, 0), (9, 2, 7, 2)],
+            6: [(2, 1, 2, 4), (9, 1, 7, 1), (0, 0, 2, 0), (9, 7, 7, 7)]
         }
+        self.current_step = {key: 0 for key in self.openings}  # 初始化每个开局的步数指针
 
     def get_opening_move(self, board_hash):
         # 根据棋盘哈希值查找开局库中的最佳开局步骤
         if board_hash in self.openings:
-            return self.openings[board_hash]
+            opening = self.openings[board_hash]
+            step = self.current_step[board_hash]
+            if step < len(opening):
+                move = opening[step]  # 获取当前步的走法
+                self.current_step[board_hash] += 1  # 步数指针递增
+                return move
+            else:
+                return None  # 如果步数超出，返回 None 表示开局已结束
         return None
 
 
@@ -84,24 +100,58 @@ class AILogicHard:
                         break  # Alpha-Beta 剪枝
             return minEval
 
+    # def get_best_move(self, board):
+    #     """结合开局库和 Minimax 算法，获取最佳走法。"""
+    #     # 查找开局库的开局走法
+    #     board_hash = self.hash_board(board) # 使用 hash_board 方法对当前棋盘进行哈希处理，生成一个唯一的字符串，用于在开局库中查找
+    #     opening_move = self.opening_library.get_opening_move(board_hash) # 在开局库中查找该哈希值对应的开局步骤
+    #     if opening_move:
+    #         return opening_move[0]  # 返回开局库中的一步
+    #
+    #     # 否则使用 Minimax + Alpha-Beta 剪枝选择最佳走法
+    #     best_move = None
+    #     best_value = float('-inf')
+    #     for piece,moves in self.get_all_possible_moves(board,'red').items():
+    #         for move in moves:
+    #             new_board = self.make_move(board, move, piece)
+    #             board_value = self.minimax(new_board, self.depth_limit, float('-inf'), float('inf'), False)
+    #             if board_value > best_value:
+    #                 best_value = board_value
+    #                 best_move = piece.position[0],piece.position[1],move[0],move[1]
+    #     return best_move
+
     def get_best_move(self, board):
-        """结合开局库和 Minimax 算法，获取最佳走法。"""
+        """结合开局库和 Minimax 算法，获取最佳走法，并使用多线程优化性能。"""
         # 查找开局库的开局走法
-        board_hash = self.hash_board(board) # 使用 hash_board 方法对当前棋盘进行哈希处理，生成一个唯一的字符串，用于在开局库中查找
-        opening_move = self.opening_library.get_opening_move(board_hash) # 在开局库中查找该哈希值对应的开局步骤
+        board_hash = self.hash_board(board)
+        opening_move = self.opening_library.get_opening_move(board_hash)
         if opening_move:
-            return opening_move[0]  # 返回开局库中的一步
+            return opening_move  # 按顺序返回开局库中的下一步
 
         # 否则使用 Minimax + Alpha-Beta 剪枝选择最佳走法
         best_move = None
         best_value = float('-inf')
-        for piece,moves in self.get_all_possible_moves(board,'red').items():
-            for move in moves:
-                new_board = self.make_move(board, move, piece)
-                board_value = self.minimax(new_board, self.depth_limit, float('-inf'), float('inf'), False)
-                if board_value > best_value:
-                    best_value = board_value
-                    best_move = piece.position[0],piece.position[1],move[0],move[1]
+
+        # 定义线程池
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            # 创建一个字典，将每个棋子的未来评估任务提交到线程池
+            future_to_move = {
+                executor.submit(self.evaluate_move, board, piece, move): (piece, move)
+                for piece, moves in self.get_all_possible_moves(board, 'red').items()
+                for move in moves
+            }
+
+            # 遍历每个任务的结果
+            for future in concurrent.futures.as_completed(future_to_move):
+                piece, move = future_to_move[future]
+                try:
+                    board_value = future.result()
+                    if board_value > best_value:
+                        best_value = board_value
+                        best_move = piece.position[0], piece.position[1], move[0], move[1]
+                except Exception as e:
+                    print(f"Error evaluating move for piece {piece}: {e}")
+
         return best_move
 
     def get_all_possible_moves(self, board, color):
@@ -124,9 +174,17 @@ class AILogicHard:
         return new_board
 
     def hash_board(self, board):
-        """生成棋盘的紧凑哈希值。"""
+        """生成棋盘的哈希值，并将其限制在 0 到 6 的范围内。"""
         board_str = str(board)
-        return hashlib.md5(board_str.encode()).hexdigest()  # 使用 MD5 生成固定长度哈希值
+        # 生成 MD5 哈希值
+        hash_value = int(hashlib.md5(board_str.encode()).hexdigest(), 16)
+        # 将哈希值限制在 0 到 6
+        return hash_value % 7
+
+    def evaluate_move(self, board, piece, move):
+        """辅助方法，用于在多线程中评估每个棋子的移动路径。"""
+        new_board = self.make_move(board, move, piece)
+        return self.minimax(new_board, self.depth_limit, float('-inf'), float('inf'), False)
 
 
 
