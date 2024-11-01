@@ -39,7 +39,6 @@ class GameManager:
         self.logic = logic
 
     def check_end(self, end_x, end_y):
-        print(self.board)
         if self.board[end_x][end_y] is None:
             return
         if self.board[end_x][end_y].name == "帅":
