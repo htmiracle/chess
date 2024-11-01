@@ -36,7 +36,7 @@ class DoublePage:
         pygame.display.set_caption("双人对战")
 
         ChessFrontMove(self.screen, ChessFrontInit(self.screen).chessboard, ChessBoard()).run(1)
-        self.button_BACK.draw(self.screen)
+        # self.button_BACK.draw(self.screen)
 
     def check_events(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
