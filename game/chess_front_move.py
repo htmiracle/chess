@@ -132,14 +132,16 @@ class ChessFrontMove:
     def p_vs_c(self):
         running = True  # 棋盘正在运行
         start_chosen, chess_board, end_position, gamemanager, i, gamelogic = self.init()
-        ai = AILogicHard(self.board, 1)
+        # ai = AILogicHard(self.board, 1)
+        ai = AILogicEasy(self.board)
         while running:
             for event in pygame.event.get():
                 if gamemanager.current_turn == 0:
                     pygame.display.update()  # 更新显示
                     pygame.time.wait(1000)
                     pygame.event.clear()
-                    start_x, start_y, end_x, end_y = ai.get_best_move(self.board.board)
+                    start_x, start_y, end_x, end_y = ai.easy_ai_run()
+                    # start_x, start_y, end_x, end_y = ai.get_best_move(self.board.board)
                     gamemanager.check_end(end_x, end_y)
                     chess_board = make_move([start_x, start_y], [end_x, end_y], chess_board)
                     self.chessboard[end_x][end_y], self.chessboard[start_x][start_y] = self.chessboard[start_x][start_y], 0
@@ -209,7 +211,10 @@ class ChessFrontMove:
                                 break
                             # 重新绘制完成移动后的棋盘
                             i.redraw(gamemanager.current_turn, [self.come_x, self.come_y])
-
+                    elif restart.is_clicked(event.pos) or undo.is_clicked(event.pos):
+                        print(restart.rect)
+                        pygame.event.post(event)
+                        return
                 elif event.type == pygame.KEYDOWN and event.key == pygame.K_c:
                     pygame.event.clear()
                     start_chosen, chess_board, end_position, gamemanager, i, gamelogic = self.init()
