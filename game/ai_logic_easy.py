@@ -24,8 +24,6 @@ class AILogicEasy:
             y = random.randint(0, 8)
             if self.board.board[x][y]:
                 if self.board.board[x][y].color == "red":
-                    print([x, y])
-                    print(self.board.board[x][y].name)
                     break
         return x, y
 
@@ -106,7 +104,6 @@ class AILogicEasy:
                         if [row, col] in danger_pos:
                             end_pos = end_position(self.board.board[row][col])
                             for x, y in end_pos:
-                                print(self.board.board[row][col].name)
                                 danger_pos = self.danger_after_move(end_position, danger_pos, x, y, row, col)
                                 if [x, y] not in danger_pos:
                                     return self.board.board[row][col], [x, y]
@@ -120,6 +117,17 @@ class AILogicEasy:
                         end_pos = end_position(self.board.board[row][col])
                         for end in end_pos:
                             if self.board.board[end[0]][end[1]]:
+                                if self.board.board[end[0]][end[1]].name == "将":
+                                    return self.board.board[row][col], end
+        for row in range(10):
+            for col in range(9):
+                if self.board.board[row][col]:
+                    if self.board.board[row][col].color == "red":
+                        end_pos = end_position(self.board.board[row][col])
+                        for end in end_pos:
+                            if self.board.board[end[0]][end[1]]:
+                                if self.board.board[end[0]][end[1]].name == "将":
+                                    return self.board.board[row][col], end
                                 if self.is_protect_black(end[0], end[1], end_position):
                                     continue
                                 return self.board.board[row][col], end
@@ -132,30 +140,97 @@ class AILogicEasy:
         gamelogic = GameLogic(self.board)
         chess_board = self.board.board
         end_position = gamelogic.piece_logic
-        danger_pos = self.danger_pos(end_position)
-        print(danger_pos)
+        danger_des = self.danger_pos(end_position)
+
+        cant_move = False
         # 优先进行进攻吃子策略
-        if self.eat_black(danger_pos, end_position):
+        if self.eat_black(danger_des, end_position):
             print("attack")
-            pos, end = self.eat_black(danger_pos, end_position)
+            pos, end = self.eat_black(danger_des, end_position)
             start_x, start_y = pos.position[0], pos.position[1]
+            if chess_board[end[0]][end[1]].name == "将":
+                return start_x, start_y, end[0], end[1]
+            # 检查吃子后是否会导致被将军
+            danger_des = self.danger_after_move(end_position, [], end[0], end[1], start_x, start_y)
+            for col in range(3, 6):
+                for row in range(0, 3):
+                    if chess_board[row][col]:
+                        if chess_board[row][col].name == "帅":
+                            if [row, col] in danger_des:
+                                cant_move = True
         # 无可吃子时防守
-        elif self.is_threatened(danger_pos, end_position):
+        elif self.is_threatened(danger_des, end_position):
             print("defend")
-            pos, end = self.is_threatened(danger_pos, end_position)
+            pos, end = self.is_threatened(danger_des, end_position)
             start_x, start_y = pos.position[0], pos.position[1]
+            # 检查逃跑后是否会导致被将军
+            danger_des = self.danger_after_move(end_position, [], end[0], end[1], start_x, start_y)
+            for col in range(3, 6):
+                for row in range(0, 3):
+                    if chess_board[row][col]:
+                        if chess_board[row][col].name == "帅":
+                            if [row, col] in danger_des:
+                                cant_move = True
         # 随机挑选一个棋子进行移动
         else:
             print("random")
-            while 1:
+            nm = 30000
+            while nm > 0:
+                nm -= 1
                 start_x, start_y = self.random_piece(0)
                 end_pos = end_position(chess_board[start_x][start_y])
-                end = random.choice(end_pos)
-                self.danger_after_move(end_position, [], end[0], end[1], start_x, start_y)
-                if end in danger_pos:
+                if not end_pos:
                     continue
-                if end_pos:
-                    break
+                end = random.choice(end_pos)
+                danger_pos = self.danger_pos(end_position)
+                danger_des = self.danger_after_move(end_position, [], end[0], end[1], start_x, start_y)
+                danger = False
+                ate = False
+                for col in range(3, 6):
+                    for row in range(0, 3):
+                        if chess_board[row][col]:
+                            if chess_board[row][col].name == "帅":
+                                if [row, col] in danger_des:
+                                    danger = True
+                                if [row, col] in danger_pos:
+                                    ate = True
+                if danger:
+                    continue
+                else:
+                    if end in danger_des and not ate:
+                        continue
+                    if end_pos:
+                        break
+
+        if cant_move:
+            print("random")
+            nm = 30000
+            while nm > 0:
+                nm -= 1
+                start_x, start_y = self.random_piece(0)
+                end_pos = end_position(chess_board[start_x][start_y])
+                if not end_pos:
+                    continue
+                end = random.choice(end_pos)
+                danger_pos = self.danger_pos(end_position)
+                danger_des = self.danger_after_move(end_position, [], end[0], end[1], start_x, start_y)
+                danger = False
+                ate = False
+                for col in range(3, 6):
+                    for row in range(0, 3):
+                        if chess_board[row][col]:
+                            if chess_board[row][col].name == "帅":
+                                if [row, col] in danger_des:
+                                    danger = True
+                                if [row, col] in danger_pos:
+                                    ate = True
+                if danger:
+                    continue
+                else:
+                    if end in danger_des and not ate:
+                        continue
+                    if end_pos:
+                        break
         return start_x, start_y, end[0], end[1]
 
 # ai = AILogicEasy(ChessBoard())

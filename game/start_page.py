@@ -26,25 +26,38 @@ class StartPage:
         # 创建按钮
         self.button_doub = ImageButton("../other_picture/double_comp.png", SCREEN_WIDTH // 2 - 100,
                                        SCREEN_HEIGHT // 2 - 50, 200, 60,
-                                       transparency=180)
+                                       transparency=230)
         self.button_ai = ImageButton("../other_picture/ai_comp.png", SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2 + 50,
                                      200, 60,
-                                     transparency=180)
+                                     transparency=230)
 
-    def draw(self):
+    def draw(self, button):
         # 绘制背景
         self.screen.blit(self.background_image, (0, 0))
         # 绘制按钮
-        self.button_doub.draw(self.screen)
-        self.button_ai.draw(self.screen)
+        if button == "doub":
+            self.button_doub.draw(self.screen, clicked=True)
+        else:
+            self.button_doub.draw(self.screen)
+        if button == "ai":
+            self.button_ai.draw(self.screen, clicked=True)
+        else:
+            self.button_ai.draw(self.screen)
 
     def check_events(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
             mouse_pos = event.pos
-            # 检测是否点击了双人对战按钮
             if self.button_doub.is_clicked(mouse_pos):
-                return "double"
+                return "start", "doub"
             # 检测是否点击了人机对战按钮
             elif self.button_ai.is_clicked(mouse_pos):
-                return "computer"
-        return "start"
+                return "start", "ai"
+        if event.type == pygame.MOUSEBUTTONUP:
+            mouse_pos = event.pos
+            # 检测是否点击了双人对战按钮
+            if self.button_doub.is_clicked(mouse_pos):
+                return "double", None
+            # 检测是否点击了人机对战按钮
+            elif self.button_ai.is_clicked(mouse_pos):
+                return "computer", None
+        return "start", None
