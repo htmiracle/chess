@@ -6,8 +6,13 @@ class ImageButton:
         self.image.set_alpha(transparency)  # 设置透明度 (0-255)
         self.rect = self.image.get_rect(topleft=(x, y))  # 设置按钮的位置和大小
         self.abs_rect = self.image.get_rect(topleft=(x+layer_x, y+layer_y))
+        self.transparency = transparency
 
-    def draw(self, screen):
+    def draw(self, screen, clicked=False):
+        if clicked:
+            self.image.set_alpha(self.transparency - 100)  # 降低透明度提供反馈
+        else:
+            self.image.set_alpha(self.transparency)
         screen.blit(self.image, self.rect)  # 将图片绘制到屏幕
 
     def draw_layer(self, layer):
