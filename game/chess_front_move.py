@@ -152,6 +152,8 @@ class ChessFrontMove:
                             print("back")
                         return
                     elif undo.is_clicked(event.pos):
+                        if len(self.board_list) < 3:
+                            break
                         if gamemanager.current_turn in [2, 3]:
                             break
                         chess_board = copy.deepcopy(self.board_list[-3])
@@ -281,6 +283,8 @@ class ChessFrontMove:
                         pygame.event.post(event)
                         return
                     elif undo.is_clicked(event.pos):
+                        if len(self.board_list) < 3:
+                            break
                         if gamemanager.current_turn in [2, 3]:
                             break
                         chess_board = copy.deepcopy(self.board_list[-3])
