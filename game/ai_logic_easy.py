@@ -160,9 +160,15 @@ class AILogicEasy:
                             for end in end_pos:
                                 danger_des = self.danger_after_move(end_position, [], end[0], end[1], row, col)
                                 if chess_board[row][col].name == "帅":
-                                    x, y = end[0], end[1]
-                                if [x, y] not in danger_des:
-                                    return row, col, end[0], end[1]
+                                    if chess_board[end[0]][end[1]]:
+                                        if chess_board[end[0]][end[1]].name == "将":
+                                            return row, col, end[0], end[1]
+                                    if [end[0], end[1]] not in danger_des:
+                                        print([end[0], end[1]])
+                                        return row, col, end[0], end[1]
+                                else:
+                                    if [x, y] not in danger_des:
+                                        return row, col, end[0], end[1]
         cant_move = False
         # 优先进行进攻吃子策略
         if self.eat_black(danger_des, end_position):

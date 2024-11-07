@@ -213,16 +213,10 @@ class AILogicHard:
             for move in moves:
                 new_board = self.make_move(board,move,piece)
                 board_value = self.evaluate_board(board, new_board, piece, move, all_possible_move_black)
-                print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
-                print("board:"+piece.name+"board_value:" + str(board_value))
-                print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
                 if board_value > best_value:
                     best_value = board_value
                     best_move = (piece.position[0], piece.position[1], move[0], move[1])
 
-        print("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz")
-        print("best_value:" + str(best_value))
-        print(best_move)
         return best_move
 
 
