@@ -3,6 +3,7 @@ import sys
 from start_page import StartPage
 from chess_front_main import DoublePage
 from chess_front_main import AiPage
+from chess_front_main import HardAiPage
 
 # 初始化 pygame
 pygame.init()
@@ -19,6 +20,7 @@ pygame.display.set_caption("开始界面")
 start_page = StartPage(screen)
 doub_page = DoublePage(screen)
 ai_page = AiPage(screen)
+hard_ai_page = HardAiPage(screen)
 
 # 当前页面状态
 current_page = "start"
@@ -39,12 +41,16 @@ while running:
             current_page = doub_page.check_events(event)
         elif current_page == "computer":
             current_page = ai_page.check_events(event)
+        elif current_page == "hard_ai":
+            current_page = ai_page.check_events(event)
 
     # 根据当前页面状态绘制内容
     if current_page == "double":
         doub_page.draw()
     elif current_page == "computer":
         ai_page.draw()
+    elif current_page == "hard_ai":
+        hard_ai_page.draw()
 
     # 更新屏幕
     pygame.display.flip()

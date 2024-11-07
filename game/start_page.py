@@ -30,6 +30,9 @@ class StartPage:
         self.button_ai = ImageButton("../other_picture/ai_comp.png", SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2 + 50,
                                      200, 60,
                                      transparency=230)
+        self.button_ai_hard = ImageButton("../other_picture/ai_comp.png", SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2 + 150,
+                                     200, 60,
+                                     transparency=230)
 
     def draw(self, button):
         # 绘制背景
@@ -43,6 +46,11 @@ class StartPage:
             self.button_ai.draw(self.screen, clicked=True)
         else:
             self.button_ai.draw(self.screen)
+        if button == "hard_ai":
+            self.button_ai_hard.draw(self.screen, clicked=True)
+        else:
+            self.button_ai_hard.draw(self.screen)
+
 
     def check_events(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -52,6 +60,8 @@ class StartPage:
             # 检测是否点击了人机对战按钮
             elif self.button_ai.is_clicked(mouse_pos):
                 return "start", "ai"
+            elif self.button_ai_hard.is_clicked(mouse_pos):
+                return "start", "hard_ai"
         if event.type == pygame.MOUSEBUTTONUP:
             mouse_pos = event.pos
             # 检测是否点击了双人对战按钮
@@ -60,4 +70,6 @@ class StartPage:
             # 检测是否点击了人机对战按钮
             elif self.button_ai.is_clicked(mouse_pos):
                 return "computer", None
+            elif self.button_ai_hard.is_clicked(mouse_pos):
+                return "hard_ai", None
         return "start", None

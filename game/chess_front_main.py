@@ -71,6 +71,28 @@ class AiPage:
                 return "start"  # 按下 ESC 键返回开始界面
         return "computer"
 
+class HardAiPage:
+    def __init__(self, screen):
+        self.screen = screen
+        self.background_color = (0, 128, 0)
+        self.font = pygame.font.SysFont("华文隶书", 48)
+
+    def draw(self):
+        pygame.display.set_caption("ai对战")
+
+        ChessFrontMove(self.screen, ChessFrontInit(self.screen).chessboard, ChessBoard()).run(3)
+
+    def check_events(self, event):
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            mouse_pos = event.pos
+            # 检测是否点击了双人对战按钮
+            if restart.is_clicked(mouse_pos):
+                print(restart.rect)
+                return "computer"
+            if back.is_clicked(mouse_pos):
+                return "start"  # 按下 ESC 键返回开始界面
+        return "computer"
+
 
 
 

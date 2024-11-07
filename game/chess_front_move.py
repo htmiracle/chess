@@ -167,19 +167,23 @@ class ChessFrontMove:
 
             pygame.display.update()  # 更新显示
 
-    def p_vs_c(self):
+    def p_vs_c(self, ezorhd):
         running = True  # 棋盘正在运行
         start_chosen, chess_board, end_position, gamemanager, i, gamelogic = self.init()
-        # ai = AILogicHard(self.board, 1)
-        ai = AILogicEasy(self.board)
+        if ezorhd == 2:
+            ai = AILogicEasy(self.board)
+        else:
+            ai = AILogicHard(self.board, 1)
         while running:
             for event in pygame.event.get():
                 if gamemanager.current_turn == 0:
                     pygame.display.update()  # 更新显示
                     pygame.time.wait(500)
                     pygame.event.clear()
-                    start_x, start_y, end_x, end_y = ai.easy_ai_run()
-                    # start_x, start_y, end_x, end_y = ai.get_best_move(self.board.board)
+                    if ezorhd == 2:
+                        start_x, start_y, end_x, end_y = ai.easy_ai_run()
+                    else:
+                        start_x, start_y, end_x, end_y = ai.get_best_move(self.board.board)
                     gamemanager.check_end(end_x, end_y, chess_board)
                     i.animate_piece_move(start_x, start_y, end_x, end_y, self.chessboard[start_x][start_y],
                                          gamemanager.current_turn, len(self.board_list) - 1)
@@ -295,5 +299,6 @@ class ChessFrontMove:
     def run(self, i):
         if i == 1:
             self.p_vs_p()
-        elif i == 2:
-            self.p_vs_c()
+        elif i >= 2:
+            self.p_vs_c(i)
+
