@@ -142,6 +142,27 @@ class AILogicEasy:
         end_position = gamelogic.piece_logic
         danger_des = self.danger_pos(end_position)
 
+        ate = False
+        for col in range(3, 6):
+            for row in range(0, 3):
+                if chess_board[row][col]:
+                    if chess_board[row][col].name == "帅":
+                        if [row, col] in danger_des:
+                            x, y = row, col
+                            ate = True
+        if ate:
+            print("king_defend")
+            for row in range(10):
+                for col in range(9):
+                    if chess_board[row][col]:
+                        if chess_board[row][col].color == "red":
+                            end_pos = end_position(chess_board[row][col])
+                            for end in end_pos:
+                                danger_des = self.danger_after_move(end_position, [], end[0], end[1], row, col)
+                                if chess_board[row][col].name == "帅":
+                                    x, y = end[0], end[1]
+                                if [x, y] not in danger_des:
+                                    return row, col, end[0], end[1]
         cant_move = False
         # 优先进行进攻吃子策略
         if self.eat_black(danger_des, end_position):
@@ -174,7 +195,7 @@ class AILogicEasy:
         # 随机挑选一个棋子进行移动
         else:
             print("random")
-            nm = 30000
+            nm = 1000
             while nm > 0:
                 nm -= 1
                 start_x, start_y = self.random_piece(0)
@@ -204,7 +225,7 @@ class AILogicEasy:
 
         if cant_move:
             print("random")
-            nm = 30000
+            nm = 3000
             while nm > 0:
                 nm -= 1
                 start_x, start_y = self.random_piece(0)

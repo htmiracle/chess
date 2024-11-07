@@ -187,6 +187,28 @@ class ChessFrontInit:
                 if [row, col] in pos:
                     self.draw_glowing_point(row, col, color=(0, 255, 0), radius=10, transparency=128)
 
+    # 在右侧居中显示当前回合的字样
+    def draw_turn_info(self, turn, turn_len):
+        turn_text = "当前回合"
+        color = RED if turn == 0 else BLACK
+
+        if turn_len == 0:
+            return
+        # 设置起始位置，使文本垂直居中在右侧
+        start_x = SCREEN_SIZE[0] - 120  # 为数字预留空间
+        start_y = (SCREEN_SIZE[1] // 2) - (len(turn_text) * 24) // 2  # 调整起始 y 位置实现居中
+
+        # 逐个字符垂直排列
+        for i, char in enumerate(turn_text):
+            char_image = font.render(char, True, color)
+            char_rect = char_image.get_rect(center=(start_x, start_y + i * 48))  # 每个字之间留一些间距
+            self.screen.blit(char_image, char_rect)
+
+        # 在 "当前回合" 右侧绘制数字
+        num_image = font.render(str((turn_len + 1) // 2), True, color)
+        num_rect = num_image.get_rect(center=(start_x + 60, start_y + (len(turn_text) - 1) * 24))  # 数字垂直居中对齐
+        self.screen.blit(num_image, num_rect)
+
     def draw_piece(self):
         for row in range(10):
             for col in range(9):
@@ -245,31 +267,32 @@ class ChessFrontInit:
     # 棋子移动后重新绘制棋盘
     # 重新绘制棋盘底格
     # 重新绘制棋子和双方文本提示
-    def draw__(self, turn):
+    def draw__(self, turn, turn_len):
         turn_str = [["执棋", ""], ["", "执棋"],
                     ["", "获胜"], ["获胜", ""]]
         self.draw_chessboard()
         self.draw_text_red("红方" + turn_str[turn][0])  # 绘制文本
         self.draw_text_black("黑方" + turn_str[turn][1])  # 绘制文本
+        self.draw_turn_info(turn, turn_len)  # 绘制当前回合字样
 
     # 重新绘制完成移动后的棋盘
-    def redraw(self, turn, last_pos):
-        self.draw__(turn)
+    def redraw(self, turn, last_pos, turn_len):
+        self.draw__(turn, turn_len)
         self.draw_piece()
         self.draw_glowing_point(last_pos[0], last_pos[1], color=(255, 0, 0), radius=10, transparency=128)
 
     # 重新绘制完成移动后的棋盘
-    def chosen_feedback(self, pos, turn, end_pos, last_pos):
-        self.draw__(turn)
+    def chosen_feedback(self, pos, turn, end_pos, last_pos, turn_len):
+        self.draw__(turn, turn_len)
         self.draw_piece_scaled(pos, end_pos)
         self.pridect_show(end_pos)
         self.draw_glowing_point(last_pos[0], last_pos[1], color=(255, 0, 0), radius=10, transparency=128)
 
-    def checkmate(self, turn, last_pos):
-        self.redraw(turn, last_pos)
+    def checkmate(self, turn, last_pos, turn_len):
+        self.redraw(turn, last_pos, turn_len)
         self.draw_text_chkmate("将军")
 
-    def animate_piece_move(self, start_x, start_y, end_x, end_y, piece_image, turn):
+    def animate_piece_move(self, start_x, start_y, end_x, end_y, piece_image, turn, turn_len):
         """
             实现棋子从起始位置到目标位置的动画
             """
@@ -291,7 +314,7 @@ class ChessFrontInit:
 
             # 清空并重新绘制棋盘和其他元素
             self.screen.fill(WOOD)
-            self.redraw(turn, (-100, -100))
+            self.redraw(turn, (-100, -100), turn_len)
             piece_rect = piece_image.get_rect()
             piece_rect.center = (current_y, current_x)
             chess_board_layer.blit(piece_image, piece_rect)

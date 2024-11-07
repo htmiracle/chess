@@ -75,7 +75,7 @@ class ChessFrontMove:
         end_pos = end_position(chess_board[start_x][start_y])
         # 重新绘制完成移动后的棋盘
         i.chosen_feedback([start_x, start_y], gamemanager.current_turn, end_pos,
-                          [self.come_x, self.come_y])
+                          [self.come_x, self.come_y], len(self.board_list) - 1)
         return start_x, start_y, end_pos
 
     def p_vs_p(self):
@@ -116,7 +116,7 @@ class ChessFrontMove:
                                 print("请重新输入")
                                 break
                             gamemanager.check_end(end_x, end_y, chess_board)
-                            i.animate_piece_move(start_x, start_y, end_x, end_y, self.chessboard[start_x][start_y], gamemanager.current_turn)
+                            i.animate_piece_move(start_x, start_y, end_x, end_y, self.chessboard[start_x][start_y], gamemanager.current_turn, len(self.board_list) - 1)
                             chess_board = make_move([start_x, start_y], [end_x, end_y], chess_board)
                             self.chessboard[end_x][end_y], self.chessboard[start_x][start_y] = self.chessboard[start_x][
                                 start_y], 0
@@ -125,6 +125,7 @@ class ChessFrontMove:
                             self.board_list.append(copy.deepcopy(chess_board))
                             self.chessboard_list.append(copy.deepcopy(self.chessboard))
                             i.chessboard = self.chessboard
+                            turn_len = len(self.board_list) - 1
                             start_chosen = False
                             # 切换玩家
                             if gamemanager.current_turn in [0, 1]:
@@ -132,16 +133,16 @@ class ChessFrontMove:
                             self.come_x, self.come_y = start_x, start_y
                             # 判断
                             if gamemanager.current_turn in [2, 3]:
-                                i.redraw(gamemanager.current_turn, [self.come_x, self.come_y])
+                                i.redraw(gamemanager.current_turn, [self.come_x, self.come_y], turn_len)
                                 end_sound.play()
                                 break
                             #  检查是否被将军
                             if checkmated_prompt(chess_board, gamelogic):
-                                i.checkmate(gamemanager.current_turn, [self.come_x, self.come_y])
+                                i.checkmate(gamemanager.current_turn, [self.come_x, self.come_y], turn_len)
                                 break
                             # 重新绘制完成移动后的棋盘
 
-                            i.redraw(gamemanager.current_turn, [self.come_x, self.come_y])
+                            i.redraw(gamemanager.current_turn, [self.come_x, self.come_y], turn_len)
                     elif restart.is_clicked(event.pos) or back.is_clicked(event.pos):
                         print(restart.rect)
                         pygame.event.post(event)
@@ -159,7 +160,8 @@ class ChessFrontMove:
                         self.chessboard = copy.deepcopy(self.chessboard_list[-3])
                         self.chessboard_list = self.chessboard_list[:-2]
                         self.come_x = self.come_y = -100
-                        i.redraw(gamemanager.current_turn, [-100, -100])
+                        turn_len = len(self.board_list) - 1
+                        i.redraw(gamemanager.current_turn, [-100, -100], turn_len)
                 elif event.type == pygame.KEYDOWN:
                     1
 
@@ -180,7 +182,7 @@ class ChessFrontMove:
                     # start_x, start_y, end_x, end_y = ai.get_best_move(self.board.board)
                     gamemanager.check_end(end_x, end_y, chess_board)
                     i.animate_piece_move(start_x, start_y, end_x, end_y, self.chessboard[start_x][start_y],
-                                         gamemanager.current_turn)
+                                         gamemanager.current_turn, len(self.board_list) - 1)
                     chess_board = make_move([start_x, start_y], [end_x, end_y], chess_board)
                     self.chessboard[end_x][end_y], self.chessboard[start_x][start_y] = self.chessboard[start_x][
                         start_y], 0
@@ -190,19 +192,20 @@ class ChessFrontMove:
                     self.board_list.append(copy.deepcopy(chess_board))
                     self.chessboard_list.append(copy.deepcopy(self.chessboard))
                     i.chessboard = self.chessboard
+                    turn_len = len(self.board_list) - 1
                     # 切换玩家
                     if gamemanager.current_turn in [0, 1]:
                         gamemanager.next_turn()
                     self.come_x, self.come_y = start_x, start_y
                     if gamemanager.current_turn in [2, 3]:
-                        i.redraw(gamemanager.current_turn, [self.come_x, self.come_y])
+                        i.redraw(gamemanager.current_turn, [self.come_x, self.come_y], turn_len)
                         continue
                     #  检查是否被将军
                     if checkmated_prompt(chess_board, gamelogic):
-                        i.checkmate(gamemanager.current_turn, [self.come_x, self.come_y])
+                        i.checkmate(gamemanager.current_turn, [self.come_x, self.come_y], turn_len)
                         continue
                     # 重新绘制完成移动后的棋盘
-                    i.redraw(gamemanager.current_turn, [self.come_x, self.come_y])
+                    i.redraw(gamemanager.current_turn, [self.come_x, self.come_y], turn_len)
                     break
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -237,7 +240,7 @@ class ChessFrontMove:
                                 break
                             gamemanager.check_end(end_x, end_y, chess_board)
                             i.animate_piece_move(start_x, start_y, end_x, end_y, self.chessboard[start_x][start_y],
-                                                 gamemanager.current_turn)
+                                                 gamemanager.current_turn, len(self.board_list) - 1)
                             chess_board = make_move([start_x, start_y], [end_x, end_y], chess_board)
                             self.chessboard[end_x][end_y], self.chessboard[start_x][start_y] = self.chessboard[start_x][
                                 start_y], 0
@@ -253,6 +256,7 @@ class ChessFrontMove:
                             self.board_list.append(copy.deepcopy(chess_board))
                             self.chessboard_list.append(copy.deepcopy(self.chessboard))
                             i.chessboard = self.chessboard
+                            turn_len = len(self.board_list) - 1
                             start_chosen = False
                             # 切换玩家
                             if gamemanager.current_turn in [0, 1]:
@@ -260,14 +264,14 @@ class ChessFrontMove:
                             self.come_x, self.come_y = start_x, start_y
                             if gamemanager.current_turn in [2, 3]:
                                 end_sound.play()
-                                i.redraw(gamemanager.current_turn, [self.come_x, self.come_y])
+                                i.redraw(gamemanager.current_turn, [self.come_x, self.come_y], turn_len)
                                 break
                             #  检查是否被将军
                             if checkmated_prompt(chess_board, gamelogic):
-                                i.checkmate(gamemanager.current_turn, [self.come_x, self.come_y])
+                                i.checkmate(gamemanager.current_turn, [self.come_x, self.come_y], turn_len)
                                 break
                             # 重新绘制完成移动后的棋盘
-                            i.redraw(gamemanager.current_turn, [self.come_x, self.come_y])
+                            i.redraw(gamemanager.current_turn, [self.come_x, self.come_y], turn_len)
                     elif restart.is_clicked(event.pos) or back.is_clicked(event.pos):
                         print(restart.rect)
                         pygame.event.post(event)
@@ -281,7 +285,8 @@ class ChessFrontMove:
                         self.chessboard = copy.deepcopy(self.chessboard_list[-3])
                         self.chessboard_list = self.chessboard_list[:-2]
                         self.come_x = self.come_y = -100
-                        i.redraw(gamemanager.current_turn, [-100, -100])
+                        turn_len = len(self.board_list) - 1
+                        i.redraw(gamemanager.current_turn, [-100, -100], turn_len)
                 elif event.type == pygame.KEYDOWN:
                     1
 
