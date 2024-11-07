@@ -113,7 +113,6 @@ class ChessFrontMove:
 
                             end_x, end_y = board_pos
                             if [end_x, end_y] not in end_pos:
-                                print("请重新输入")
                                 break
                             gamemanager.check_end(end_x, end_y, chess_board)
                             i.animate_piece_move(start_x, start_y, end_x, end_y, self.chessboard[start_x][start_y], gamemanager.current_turn, len(self.board_list) - 1)
@@ -144,12 +143,8 @@ class ChessFrontMove:
 
                             i.redraw(gamemanager.current_turn, [self.come_x, self.come_y], turn_len)
                     elif restart.is_clicked(event.pos) or back.is_clicked(event.pos):
-                        print(restart.rect)
                         pygame.event.post(event)
-                        if restart.is_clicked(event.pos):
-                            print("restart")
-                        if undo.is_clicked(event.pos):
-                            print("back")
+
                         return
                     elif undo.is_clicked(event.pos):
                         if len(self.board_list) < 3:
@@ -218,7 +213,6 @@ class ChessFrontMove:
                     sys.exit()
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     mouse_x, mouse_y = event.pos
-                    print(mouse_x, mouse_y)
                     board_pos = ChessFrontInit(self.screen).get_board_pos(mouse_x, mouse_y)
                     # 移动移动，横纵坐标分别已经保存在了board_pos中
                     if board_pos:
@@ -242,7 +236,6 @@ class ChessFrontMove:
 
                             end_x, end_y = board_pos
                             if [end_x, end_y] not in end_pos:
-                                print("请重新输入")
                                 break
                             gamemanager.check_end(end_x, end_y, chess_board)
                             i.animate_piece_move(start_x, start_y, end_x, end_y, self.chessboard[start_x][start_y],
@@ -251,13 +244,6 @@ class ChessFrontMove:
                             self.chessboard[end_x][end_y], self.chessboard[start_x][start_y] = self.chessboard[start_x][
                                 start_y], 0
 
-                            for row in chess_board:
-                                for pie in row:
-                                    if pie:
-                                        print(pie.name, end=" ")
-                                    else:
-                                        print("〇", end=" ")
-                                print()
                             gamelogic.logic_board.board = chess_board
                             self.board_list.append(copy.deepcopy(chess_board))
                             self.chessboard_list.append(copy.deepcopy(self.chessboard))
@@ -279,7 +265,6 @@ class ChessFrontMove:
                             # 重新绘制完成移动后的棋盘
                             i.redraw(gamemanager.current_turn, [self.come_x, self.come_y], turn_len)
                     elif restart.is_clicked(event.pos) or back.is_clicked(event.pos):
-                        print(restart.rect)
                         pygame.event.post(event)
                         return
                     elif undo.is_clicked(event.pos):

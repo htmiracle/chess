@@ -85,8 +85,3 @@ class SimpleChessAI:
         else:
             return None
 
-# 示例使用
-# 假设board是已有的棋盘对象
-# ai = SimpleChessAI(board)
-# start, end = ai.make_move()
-# print(f"AI选择的移动: 从{start}到{end}")
