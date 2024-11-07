@@ -81,21 +81,7 @@ class AILogicHard:
                     position_value -= 50
                 elif piece.name == "帅":
                     position_value -= 1000
-            if (black_piece.name == "車" or black_piece.name == "砲") and (piece.position[0] == black_piece[0] or piece.position[1] == black_piece[1]):
-                if piece.name == "兵":
-                    position_value -= 5
-                elif piece.name == "仕":
-                    position_value -= 10
-                elif piece.name == "相":
-                    position_value -= 10
-                elif piece.name == "炮":
-                    position_value -= 25
-                elif piece.name == "馬":
-                    position_value -= 40
-                elif piece.name == "車":
-                    position_value -= 50
-                elif piece.name == "帅":
-                    position_value -= 1000
+            
 
             if piece.position in moves:
 
